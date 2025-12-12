@@ -9,65 +9,51 @@
 
 template <typename V>
 class BSTreeDict : public Dict<V> {
+private:
+    BSTree<TableEntry<V>>* tree;
 
+public:
+    
+    BSTreeDict()  {
+    
+     tree = new BSTree<TableEntry<V>>();
 
-	private:
-		BSTree<TableEntry<V>>* tree;
-		
+    }
 
+    ~BSTreeDict() {
+    
+	    delete tree;
+    }
 
-	public:
-		BSTreeDict(){
-			tree = BSTree<TableEntry<V>>();
-		
-		}
+     friend std::ostream& operator<<(std::ostream &out, const BSTreeDict<V> &bsd) {
+        return out << *(bsd.tree);  
+    }
 
-		~BSTreeDict(){
-			delete tree;
-		}
+    
+    V operator[](std::string key) {
+        return tree->search(key).value;
+    }
 
-		friend std::ostream& operator<<(std::ostream &out, const BSTreeDict<V> &bs){
-			out << bs->tree;
-			return out;
-		}
+      void insert(std::string key, V value) {
+        TableEntry<V> entry(key, value);
+        tree->insert(entry);
+    }
 
-		V operator[](std::string key){
-			return search(key);
-	
-		}
+    V search(std::string key) {
+         return tree->search(key).value;
+    }
 
-		void insert(std::string key, V value) override{
-			TableEntry<V> entry(key,value);
-			tree->insert(entry);
-		
-		}
+    V remove(std::string key) {
+        TableEntry<V> entry(key);
+         TableEntry<V> found = tree->search(entry);
+	 V aux = found.value;
+	 tree-> remove(found);
+	 return aux;
+    }
 
-		V search(std:: string key) override{
-			TableEntry<V> entry(key);
-			TableEntry<V> encontrado = tree->search(entry);
-			return encontrado.value;
-		
-		}
-
-		V remove(std::string key) override{
-			TableEntry<V> entry(key);
-			TableEntry<V> found = tree->search(entry);
-			V val = found.value;
-			tree->remove(entry);
-			return val;
-		
-		}
-
-		int entries() override{
-			return tree->size();
-		
-		}
-
-
-
-
-
+    int entries() {
+        return tree->size(); 
+    }
+   
 };
-
-
 #endif
